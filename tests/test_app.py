@@ -1,5 +1,6 @@
 import json
 import threading
+from typing import Any, Tuple
 from http.client import HTTPConnection
 from http.server import HTTPServer
 
@@ -18,7 +19,7 @@ def setup_function():
     tasks.clear()
 
 
-def start_server():
+def start_server() -> Tuple[HTTPServer, threading.Thread]:
 
     server = HTTPServer(
         ("127.0.0.1", 0),
@@ -36,7 +37,10 @@ def start_server():
     return server, thread
 
 
-def stop_server(server, thread):
+def stop_server(
+    server: HTTPServer,
+    thread: threading.Thread
+) -> None:
 
     server.shutdown()
 
@@ -45,7 +49,11 @@ def stop_server(server, thread):
     thread.join()
 
 
-def request(server, method, path):
+def request(
+    server: HTTPServer,
+    method: str,
+    path: str
+) -> Tuple[int, Any]:
 
     connection = HTTPConnection(
         "127.0.0.1",
@@ -157,6 +165,7 @@ def test_missing_task():
 
     assert result is None
 
+
 def test_delete_missing_task():
 
     result = delete_task(9999)
@@ -198,6 +207,10 @@ def test_delete_task_endpoint():
 
         assert status == 404
 
+        assert body["error"] == (
+            "Task not found"
+        )
+
         status, body = request(
             server,
             "DELETE",
@@ -205,6 +218,10 @@ def test_delete_task_endpoint():
         )
 
         assert status == 400
+
+        assert body["error"] == (
+            "Invalid task ID"
+        )
 
     finally:
 
