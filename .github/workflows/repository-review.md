@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  copilot-requests: write
   contents: read
 
 safe-outputs:
