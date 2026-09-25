@@ -95,7 +95,3 @@ def test_missing_task():
     result = get_task(9999)
 
     assert result is None
-
-def test_ruleset_demo():
-
-    assert False
